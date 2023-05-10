@@ -11,13 +11,13 @@ using TimeHelper.Data.DbAccess.Repositories.Base;
 
 namespace TimeHelper.Data.DbAccess.Repositories
 {
-    public class DateRepository : EFRepositoryBase<Date>
+    internal class DateRepository : EFRepositoryBase<Date>
     {
         public DateRepository(DbContext context) : base(context)
         {
         }
 
-        public Date GetByName(string name)
+        public Date? GetByName(string name)
         {
             return _dbSet.FirstOrDefault(d => d.DateName == name);
         }

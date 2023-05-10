@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TimeHelper.Data.DbAccess.Repositories.Base
 {
-    public abstract class EFRepositoryBase<T> where T : class
+    internal abstract class EFRepositoryBase<T> where T : class
     {
         #region Fields
 

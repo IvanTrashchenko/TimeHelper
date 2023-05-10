@@ -3,38 +3,119 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeHelper.Data.DbAccess.Context;
 using TimeHelper.Data.DbAccess.Models;
+using TimeHelper.Data.DbAccess.Repositories;
 
 namespace TimeHelper.Data.DbAccess.Services
 {
     public static class DateService
     {
-        #region Constants
-
-        private const int DB_MAX_TRY_COUNT = 3; // READ_COMMITTED_SNAPSHOT is ON, thus clients are expected to retry
-
-        #endregion
-
         #region Public methods
 
         public static void AddOrUpdateDate(string name, DateTime date)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
+            using (var context = new TimeHelperContext())
+            {
+                var dateRepository = new DateRepository(context);
+
+                using (var dbContextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var savedDate = dateRepository.GetByName(name);
+
+                        if (savedDate == null)
+                        {
+                            savedDate = new Date()
+                            {
+                                DateName = name,
+                                DateValue = date
+                            };
+                            dateRepository.Add(savedDate);
+                        }
+                        else
+                        {
+                            savedDate.DateValue = date;
+                            dateRepository.Update(savedDate);
+                        }
+
+                        context.SaveChanges();
+                        dbContextTransaction.Commit();
+                    }
+                    catch
+                    {
+                        dbContextTransaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
-        public static Date GetDate(string name)
+        public static Date? GetDate(string name)
         {
-            return null;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            using (var context = new TimeHelperContext())
+            {
+                var dateRepository = new DateRepository(context);
+
+                return dateRepository.GetByName(name);
+            }
         }
 
         public static IEnumerable<Date> GetDates()
         {
-            return null;
+            using (var context = new TimeHelperContext())
+            {
+                var dateRepository = new DateRepository(context);
+
+                return dateRepository.GetAll();
+            }
         }
 
         public static void DeleteDate(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
+            using (var context = new TimeHelperContext())
+            {
+                var dateRepository = new DateRepository(context);
+
+                using (var dbContextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var savedDate = dateRepository.GetByName(name);
+
+                        if (savedDate == null)
+                        {
+                            throw new InvalidOperationException("Date not found.");
+                        }
+
+                        dateRepository.Delete(savedDate);
+
+                        context.SaveChanges();
+                        dbContextTransaction.Commit();
+                    }
+                    catch
+                    {
+                        dbContextTransaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         #endregion

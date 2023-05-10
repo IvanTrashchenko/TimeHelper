@@ -5,7 +5,7 @@ using TimeHelper.Data.DbAccess.Models;
 
 namespace TimeHelper.Data.DbAccess.Context;
 
-public partial class TimeHelperContext : DbContext
+internal partial class TimeHelperContext : DbContext
 {
     public TimeHelperContext()
     {
