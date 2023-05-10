@@ -31,11 +31,10 @@ public partial class TimeHelperContext : DbContext
     {
         modelBuilder.Entity<Date>(entity =>
         {
-            entity.HasKey(e => e.DateId);
-
             entity.ToTable("Date");
 
-            entity.Property(e => e.DateId).ValueGeneratedNever();
+            entity.HasIndex(e => e.DateName, "UC_DateName").IsUnique();
+
             entity.Property(e => e.DateName).HasMaxLength(256);
             entity.Property(e => e.DateValue).HasColumnType("date");
         });
