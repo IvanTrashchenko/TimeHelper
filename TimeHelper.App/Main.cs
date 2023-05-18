@@ -22,7 +22,7 @@ namespace TimeHelper.App
         {
             try
             {
-                var results = DateService.GetDates().OrderByDescending(d => d.DateValue).ToList();
+                var results = DateService.GetDates().OrderBy(d => d.GetTimeUntilNextAnniversary()).ToList();
                 dataGridViewResults.DataSource = results;
             }
             catch (Exception ex)
