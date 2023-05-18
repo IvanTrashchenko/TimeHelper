@@ -101,7 +101,7 @@ namespace TimeHelper.Data.DbAccess.Services
 
                         if (savedDate == null)
                         {
-                            throw new InvalidOperationException("Date not found.");
+                            throw new InvalidOperationException($"Date with name {name} not found.");
                         }
 
                         dateRepository.Delete(savedDate);
