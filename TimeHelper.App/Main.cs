@@ -33,7 +33,7 @@ namespace TimeHelper.App
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!IsNameValid()) return;
+            if (!IsNameValid() || !IsDateValid()) return;
 
             try
             {
@@ -69,6 +69,17 @@ namespace TimeHelper.App
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
                 MessageBox.Show("Date name cannot be empty.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsDateValid()
+        {
+            if (dtpDate.Value > DateTime.Now)
+            {
+                MessageBox.Show("Please select a date from the past.");
                 return false;
             }
 
